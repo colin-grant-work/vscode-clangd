@@ -6,10 +6,11 @@ import * as vscodelc from 'vscode-languageclient';
 import * as vscodelct from 'vscode-languageserver-types';
 
 export function activate(client: vscodelc.LanguageClient,
-                         context: vscode.ExtensionContext) {
+                         context: vscode.ExtensionContext): SemanticHighlightingFeature {
   const feature = new SemanticHighlightingFeature(client, context);
   context.subscriptions.push(feature);
   client.registerFeature(feature);
+  return feature;
 }
 
 // Parameters for the semantic highlighting (server-side) push notification.

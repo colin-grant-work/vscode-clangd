@@ -6,6 +6,11 @@ export function get<T>(key: string): T {
   return substitute(vscode.workspace.getConfiguration('clangd').get(key));
 }
 
+// Gets the config value `clangd.<key>`. Applies ${variable} substitutions.
+export function getWithURI<T>(key: string, resourceURI: vscode.Uri): T {
+  return substitute(vscode.workspace.getConfiguration('clangd', resourceURI).get(key));
+}
+
 // Sets the config value `clangd.<key>`. Does not apply substitutions.
 export function update<T>(key: string, value: T,
                           target?: vscode.ConfigurationTarget) {
