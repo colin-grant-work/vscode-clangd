@@ -30,7 +30,8 @@
         "onLanguage:objective-cpp",
         "onCommand:clangd.activate",
         "onCommand:clangd.install",
-        "onCommand:clangd.update"
+        "onCommand:clangd.update",
+        "onCommand:clingd.setRoots"
     ],
     "main": "./out/src/extension",
     "scripts": {
@@ -241,6 +242,10 @@
                 "command": "clangd.inlayHints.toggle",
                 "category": "clangd",
                 "title": "Toggle inlay hints"
+            },
+            {
+                "command": "clangd.setRoots",
+                "title": ""
             }
         ],
         "keybindings": [
