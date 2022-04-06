@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 
 import {ClangdContext, clangdDocumentSelector} from './clangd-context';
+import {registerSetRootsCommand} from './root-management';
 
 /**
  *  This method is called when the extension is activated. The extension is
@@ -13,54 +14,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const clangdContext = new ClangdContext;
   context.subscriptions.push(clangdContext);
 
-  context.subscriptions.push(vscode.commands.registerCommand(
-      'clangd.setRoots', (newRoots: string[]) => {
-        const selectors = clangdDocumentSelector as vscode.DocumentFilter[];
-        if (!Array.isArray(newRoots) ||
-            !newRoots.every(item => typeof item === 'string')) {
-          console.log('Received incorrect arguments for "clangd.setRoots"');
-          return;
-        }
-        const withGlobs = newRoots.map(
-            root => `${root.endsWith('/') ? root : root + '/'}**/*`);
-        const current =
-            new Set(selectors
-                        .filter(item => (item.language === 'c' ||
-                                         item.language === 'cpp') &&
-                                        typeof item.pattern === 'string')
-                        .map(({pattern}) => pattern));
-        const toAdds = [];
-        for (const glob of withGlobs) {
-          if (!current.has(glob)) {
-            toAdds.push(glob);
-          }
-          current.delete(glob);
-        }
-        // All that are left are things that were not on the latest list
-        for (const toDelete of current) {
-          let index;
-          while ((index = selectors.findIndex(item => item.pattern ===
-                                                      toDelete)) !== -1) {
-            selectors.splice(index, 1);
-          }
-        }
-        for (const toAdd of toAdds) {
-          selectors.push({scheme: 'file', language: 'c', pattern: toAdd},
-                         {scheme: 'file', language: 'cpp', pattern: toAdd});
-        }
-        if (current.size) {
-          console.log(
-              'ClangD has detected a deletion in of a root and is restarting.');
-          vscode.commands.executeCommand('clangd.restart');
-        } else {
-          console.log(
-              'CLangD has detected a change in its roots and its reinitializing.')
-          clangdContext.client['initializeFeatures']();
-        }
-        console.log(
-            'CLangD is now using this selector to determine what to look at\n' +
-            JSON.stringify(selectors, null, 2));
-      }));
+  registerSetRootsCommand(context, clangdContext);
 
   // An empty place holder for the activate command, otherwise we'll get an
   // "command is not registered" error.

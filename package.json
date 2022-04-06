@@ -31,7 +31,7 @@
         "onCommand:clangd.activate",
         "onCommand:clangd.install",
         "onCommand:clangd.update",
-        "onCommand:clingd.setRoots"
+        "onCommand:clangd.setRoots"
     ],
     "main": "./out/src/extension",
     "scripts": {
@@ -245,7 +245,8 @@
             },
             {
                 "command": "clangd.setRoots",
-                "title": ""
+                "title": "Set roots",
+                "category": "clangd"
             }
         ],
         "keybindings": [
@@ -312,6 +313,10 @@
                 }
             ],
             "commandPalette": [
+                {
+                    "command": "clangd.setRoots",
+                    "when": "resourceLangId == never-to-be-realized"
+                },
                 {
                     "command": "clangd.typeHierarchy.viewParents",
                     "when": "resourceLangId == cpp"
