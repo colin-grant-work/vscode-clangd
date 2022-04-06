@@ -25,7 +25,8 @@ export async function activate(context: vscode.ExtensionContext) {
             root => `${root.endsWith('/') ? root : root + '/'}**/*`);
         const current =
             new Set(selectors
-                        .filter(item => item.language === 'c' &&
+                        .filter(item => (item.language === 'c' ||
+                                         item.language === 'cpp') &&
                                         typeof item.pattern === 'string')
                         .map(({pattern}) => pattern));
         const toAdds = [];
@@ -37,8 +38,9 @@ export async function activate(context: vscode.ExtensionContext) {
         }
         // All that are left are things that were not on the latest list
         for (const toDelete of current) {
-          const index = selectors.findIndex(item => item.pattern === toDelete)
-          if (index !== -1) {
+          let index;
+          while ((index = selectors.findIndex(item => item.pattern ===
+                                                      toDelete)) !== -1) {
             selectors.splice(index, 1);
           }
         }
